@@ -5,13 +5,14 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 def main():
-    zipFile = True # for future use
+    # zipFile = True # for future use
 
     if len(sys.argv) < 2:
         print("Couldn't find the website argument")
         sys.exit(1)
     
     url = sys.argv[1]
+
     # Todo : validate website
     print("THREAD: ", url)
 
@@ -20,31 +21,38 @@ def main():
         print("Couldn't get the website")
         sys.exit(1)
     
+    # GET all posts
     soup = BeautifulSoup(response.text, "html.parser")
-
-    # Find all images in span
-    # span_tags = soup.findAll("span", {"class": "file-info"}, recursive=True)
     posts = soup.select("body.is_thread > #delform > div.board > div.thread")
-    # posts = soup.find_all("body.is_thread > #delform > div.board > div.thread > postContainer")
     posts = posts[0].select("div.postContainer")
 
-    # print(spanTag)
+    # Create folder to save images
+    FOLDER_NAME = "downloaded_images"
+    os.makedirs(FOLDER_NAME, exist_ok=True)
 
-    # Skip first post
-    # OpPost = posts[0] # Verify if is deep copy
-    # posts = posts[1:]
+    imagesDownloaded = 0
 
-    # Print all files link
-    for post in posts:
+    # Do the main work, donwload images and save them
+    for index, post in enumerate(posts): # TODO: verifies if this is the best efficient way to do it
         fileLinkTag = post.select_one("div.post > div.file > div.fileText > a")
-        # print with a new line
 
-        print("FileTag: ", fileLinkTag, " ")
+        print("Post:", index, "FileTag:", fileLinkTag, " ")
 
         if fileLinkTag:
-            print("FileLinkTag: ", fileLinkTag['href'], "\n")
+            imageURL = "https:" + fileLinkTag['href']
 
+            print("Downloading from: ", imageURL, "\n")
+            img = requests.get(imageURL)
+            if img.status_code == 200:
+                with open(os.path.join(FOLDER_NAME, imageURL.split('/')[-1]), 'wb') as f:
+                    f.write(img.content)
+                    f.close()
+                imagesDownloaded += 1
+            else:
+                print("!!!Couldn't get the image from: ", imageURL, "\n")
 
+    # Success message
+    print("Done!\nDownloaded", imagesDownloaded, "images in", FOLDER_NAME, "folder")
 
     return 0
 
