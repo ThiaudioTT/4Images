@@ -11,7 +11,9 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["https://boards.4channel.org/g/thread/96787962"] // put the url here
+            "args": [
+                "https://boards.4channel.org/g/thread/96797902"
+            ] // put the url here
         }
     ]
 }

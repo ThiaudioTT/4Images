@@ -23,11 +23,26 @@ def main():
     soup = BeautifulSoup(response.text, "html.parser")
 
     # Find all images in span
-    span_tags = soup.findAll("span", {"class": "file-info"}, recursive=True)
+    # span_tags = soup.findAll("span", {"class": "file-info"}, recursive=True)
+    posts = soup.select("body.is_thread > #delform > div.board > div.thread")
+    # posts = soup.find_all("body.is_thread > #delform > div.board > div.thread > postContainer")
+    posts = posts[0].select("div.postContainer")
 
-    # Print all tags
-    for spanTag in span_tags: # WIP: spantag is empty
-        print("TAG:", spanTag)
+    # print(spanTag)
+
+    # Skip first post
+    # OpPost = posts[0] # Verify if is deep copy
+    # posts = posts[1:]
+
+    # Print all files link
+    for post in posts:
+        fileLinkTag = post.select_one("div.post > div.file > div.fileText > a")
+        # print with a new line
+
+        print("FileTag: ", fileLinkTag, " ")
+
+        if fileLinkTag:
+            print("FileLinkTag: ", fileLinkTag['href'], "\n")
 
 
 
