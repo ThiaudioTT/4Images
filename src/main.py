@@ -36,7 +36,7 @@ def main():
     for index, post in enumerate(posts): # TODO: verifies if this is the best efficient way to do it
         fileLinkTag = post.select_one("div.post > div.file > div.fileText > a")
 
-        print("Post:", index, "FileTag:", fileLinkTag, " ")
+        print("Post:", index + 1, "FileTag:", fileLinkTag, " ")
 
         if fileLinkTag:
             imageURL = "https:" + fileLinkTag['href']
